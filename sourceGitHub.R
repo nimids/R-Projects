@@ -3,8 +3,8 @@ if(!exists("chrissTools") || !is.environment(chrissTools)){
   chrissTools$source <- function(f, encoding = 'UTF-8', local = .GlobalEnv) {
     eval(parse(f, encoding = encoding), envir = local)
   }
-  attach(chrissTools, warn.conflicts = FALSE)
   chrissTools$printf <- function(...) cat(sprintf(...))
+  attach(chrissTools, warn.conflicts = FALSE)
 }
 if(exists("chrissTools") && all(is.na(match(search(),"chrissTools")))){
   attach(chrissTools, warn.conflicts = FALSE)
@@ -29,3 +29,5 @@ if(!("knitr" %in% installed.packages()[,1])){
 }
 source("https://raw.githubusercontent.com/nimids/R-Projects/main/cxnorm.R", local = chrissTools)
 source("https://raw.githubusercontent.com/nimids/R-Projects/main/cxbinom.R", local = chrissTools)
+detach(chrissTools)
+attach(chrissTools, warn.conflicts = FALSE)
