@@ -1,21 +1,6 @@
 if(!require("mosaic")){
-  #if it didn't load we can try to install it
-  install.packages("mosaic")
-  if(!require("mosaic")){
-    stop("Mosaic isn't loading for some reason! :(")
-  }
+  stop("Mosaic isn't loading for some reason! :(")
 }
-if(!("knitr" %in% installed.packages()[,1])){
-  #We only need knitr to nicely print tables, rmarkdown includes it but we don't
-  #  need to require it. Later we may need rmarkdown so we will get it out of
-  #  the way now
-  install.packages("rmarkdown")
-  if(!("knitr" %in% installed.packages()[,1])){
-    stop("knitr isn't installed for some reason! :(")
-  }
-}
-
-printf <- function(...) cat(sprintf(...))
 cgbinom <- function(p, size, prob,
                    label = TRUE,
                    legend = label,
@@ -68,16 +53,3 @@ cgbinom <- function(p, size, prob,
       y = "Density")
   return(resultPlot)
 }
-
-print(dplyr::tibble(
-  x = 0:16,
-  density = dbinom(0:16, 16, 1/3)
-) %>% gf_col(
-  density ~ x
-) %>%
-  gf_labs(
-    x = NULL,
-    y = "Density"))
-print(cgbinom(c(0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875), 16, 1/3, legend = FALSE))
-
-print(cgbinom(0.5, 2000, 0.5))

@@ -1,21 +1,6 @@
 if(!require("mosaic")){
-  #if it didn't load we can try to install it
-  install.packages("mosaic")
-  if(!require("mosaic")){
-    stop("Mosaic isn't loading for some reason! :(")
-  }
+  stop("Mosaic isn't loading for some reason! :(")
 }
-if(!("knitr" %in% installed.packages()[,1])){
-  #We only need knitr to nicely print tables, rmarkdown includes it but we don't
-  #  need to require it. Later we may need rmarkdown so we will get it out of
-  #  the way now
-  install.packages("rmarkdown")
-  if(!("knitr" %in% installed.packages()[,1])){
-    stop("knitr isn't installed for some reason! :(")
-  }
-}
-
-printf <- function(...) cat(sprintf(...))
 cgnorm <- function(q, mean = 0, sd = 1,
                    label = TRUE,
                    legend = label,
@@ -65,7 +50,7 @@ cgnorm <- function(q, mean = 0, sd = 1,
     ) %>%
     gf_labs(
       x = NULL,
-      y = "Density") 
+      y = "Density")
   if(label){
     meanDensity <- dnorm(mean, mean, sd)
     labels <- dplyr::tibble(
@@ -78,7 +63,7 @@ cgnorm <- function(q, mean = 0, sd = 1,
       gf_text(
         height ~ q,
         label = ~label,
-        data = labels, 
+        data = labels,
         vjust = -0.2,
         hjust = 0.5,
         inherit = FALSE,
@@ -91,7 +76,7 @@ cgnorm <- function(q, mean = 0, sd = 1,
   }
   return(resultPlot)
 }
-cdnorm <- function (x, mean = 0, sd = 1, lower.tail = TRUE, 
+cdnorm <- function (x, mean = 0, sd = 1, lower.tail = TRUE,
                     plot = TRUE,
                     label = TRUE,
                     verbose = TRUE,
@@ -104,7 +89,7 @@ cdnorm <- function (x, mean = 0, sd = 1, lower.tail = TRUE,
                     cSEnd = 1,
                     cSOption = c("D", "A", "B", "C", "E"),
                     ...,
-                    return = c("value", "plot", "table")) 
+                    return = c("value", "plot", "table"))
 {
   return <- match.arg(return)
   cSOption <- match.arg(cSOption)
@@ -132,7 +117,7 @@ cdnorm <- function (x, mean = 0, sd = 1, lower.tail = TRUE,
     }
   }
   resultPlot <- cgnorm(q = x, mean = mean, sd = sd,  label = FALSE,
-                       legend = legend, digits = digits, xlim = xlim, ylim = ylim, 
+                       legend = legend, digits = digits, xlim = xlim, ylim = ylim,
                        cSBegin = cSBegin, cSEnd = cSEnd, cSOption = cSOption)
   if(label){
     eHeight <- dnorm(mean, mean, sd) * 0.05
@@ -174,7 +159,7 @@ cdnorm <- function (x, mean = 0, sd = 1, lower.tail = TRUE,
     return(toReturn)
   }
 }
-cpnorm <- function (q, mean = 0, sd = 1, lower.tail = TRUE, 
+cpnorm <- function (q, mean = 0, sd = 1, lower.tail = TRUE,
                     plot = TRUE,
                     label = TRUE,
                     verbose = TRUE,
@@ -187,7 +172,7 @@ cpnorm <- function (q, mean = 0, sd = 1, lower.tail = TRUE,
                     cSEnd = ifelse(lower.tail, 1, 0),
                     cSOption = c("D", "A", "B", "C", "E"),
                     ...,
-                    return = c("value", "plot", "table")) 
+                    return = c("value", "plot", "table"))
 {
   return <- match.arg(return)
   cSOption <- match.arg(cSOption)
@@ -220,7 +205,7 @@ cpnorm <- function (q, mean = 0, sd = 1, lower.tail = TRUE,
     }
   }
   resultPlot <- cgnorm(q = q, mean = mean, sd = sd,  label = label,
-                       legend = legend, digits = digits, xlim = xlim, ylim = ylim, 
+                       legend = legend, digits = digits, xlim = xlim, ylim = ylim,
                        cSBegin = cSBegin, cSEnd = cSEnd, cSOption = cSOption)
   if(plot){
     print(resultPlot)
@@ -238,7 +223,7 @@ cpnorm <- function (q, mean = 0, sd = 1, lower.tail = TRUE,
     return(toReturn)
   }
 }
-cqnorm <- function (p, mean = 0, sd = 1, lower.tail = TRUE, 
+cqnorm <- function (p, mean = 0, sd = 1, lower.tail = TRUE,
                     plot = TRUE,
                     label = TRUE,
                     verbose = TRUE,
@@ -251,7 +236,7 @@ cqnorm <- function (p, mean = 0, sd = 1, lower.tail = TRUE,
                     cSEnd = ifelse(lower.tail, 1, 0),
                     cSOption = c("D", "A", "B", "C", "E"),
                     ...,
-                    return = c("value", "plot", "table")) 
+                    return = c("value", "plot", "table"))
 {
   return <- match.arg(return)
   cSOption <- match.arg(cSOption)
@@ -298,22 +283,3 @@ cqnorm <- function (p, mean = 0, sd = 1, lower.tail = TRUE,
     return(toReturn)
   }
 }
-#What colors do you like best?
-gridExtra::grid.arrange(grobs = lapply(c("D", "A", "B", "C", "E"), function(cSOption){
-  plot = cpnorm(c(-1.15035,-0.6745, -0.31864, 0, 0.31864, 0.6745, 1.15035),
-                cSOption = cSOption, plot = F, label = F, verbose = F, return = "plot") %>%
-    gf_labs(title = paste0("Color Scale Option: ", cSOption))
-  }), nrow=3, ncol=2)
-#What theme?
-gridExtra::grid.arrange(grobs = lapply(c(theme_gray, theme_bw, theme_linedraw, theme_light, theme_dark, theme_minimal, theme_classic, theme_void), function(theme){
-  plot = cpnorm(c(-1.15035,-0.6745, -0.31864, 0, 0.31864, 0.6745, 1.15035),
-                plot = F, label = F, verbose = F, return = "plot") %>%
-    gf_theme(theme())
-  }), nrow=3, ncol=3)
-
-#demo:
-cdnorm(c(2.699301, 3.651020, 4.362721, 5.000000, 5.637279, 6.348980, 7.300699), 5, 2)
-cpnorm(c(2.699301, 3.651020, 4.362721, 5.000000, 5.637279, 6.348980, 7.300699), 5, 2)
-cpnorm(c(2.699301, 3.651020, 4.362721, 5.000000, 5.637279, 6.348980, 7.300699), 5, 2, lower.tail = F)
-cqnorm(c(0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875), 5, 2)
-cqnorm(c(0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875), 5, 2, lower.tail = F)
