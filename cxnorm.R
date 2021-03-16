@@ -1,4 +1,4 @@
-if(!require("mosaic")){
+if(!suppressMessages(require("mosaic", warn.conflicts = FALSE, quietly = TRUE))){
   stop("Mosaic isn't loading for some reason! :(")
 }
 cgnorm <- function(q, mean = 0, sd = 1,

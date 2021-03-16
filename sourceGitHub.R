@@ -29,5 +29,6 @@ if(!("knitr" %in% installed.packages()[,1])){
 }
 source("https://raw.githubusercontent.com/nimids/R-Projects/main/cxnorm.R", local = chrissTools)
 source("https://raw.githubusercontent.com/nimids/R-Projects/main/cxbinom.R", local = chrissTools)
+source("https://raw.githubusercontent.com/nimids/R-Projects/main/rpick.R", local = chrissTools)
 detach(chrissTools)
 attach(chrissTools, warn.conflicts = FALSE)

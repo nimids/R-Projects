@@ -1,0 +1,177 @@
+---
+title: "R Notebook"
+output:
+  html_notebook: rmarkdown::html_document
+  pdf_document: default
+  html_document: rmarkdown::html_document
+---
+
+```{r}
+#source("https://raw.githubusercontent.com/nimids/R-Projects/main/sourceGitHub.R")
+source("source.R")
+```
+
+# Random Pick:
+
+Picks n items from an urn filled with choices, with or without replacement.
+
+- [Usage](#usage)
+- [Arguments](#arguments)
+- [Examples](#examples)
+- [Plots](#plots)
+
+## Usage:
+```{r, eval=FALSE}
+rpick(
+  n = 1,
+  choices = c("A","B","C"),
+  replace = TRUE,
+  verbose = FALSE
+)
+```
+
+## Arguments:
+--------  --------------------------------------------------
+n         number of draws
+choices   vector of choices
+replace   if TRUE, choices are put back before the next draw
+verbose   if TRUE, forces rpick to print out it's self
+--------  --------------------------------------------------																	
+
+## Examples:
+
+Do one sample:
+```{r}
+n <- 10
+choices <- c(1,1,1,2,2,3)
+pickResult <- rpick(n, choices)
+```
+
+Print out the result:
+```{r}
+print(pickResult)
+```
+
+Look at raw values:
+```{r}
+value(pickResult)
+```
+
+Do lots of one samples:
+```{r}
+samples <- 10000
+
+samplesTable <- do(samples) * rpick(n = n, choices = c(1,1,1,2,2,3))
+
+print(samplesTable)
+```
+
+
+  We don't need choices, replace and result, also do adds some extra columns we
+don't need, .row and .index we could just ignore them. or we can use mutate to
+set the columns to NULL removing them.
+```{r}
+samplesTable %>%
+  mutate(
+    choices = NULL,
+    replace = NULL,
+    result = NULL,
+    .row = NULL,
+    .index = NULL
+  ) ->
+  samplesTable
+print(samplesTable)
+```
+  
+Print out counts of each result:
+```{r}
+{
+  cat("count numOf1:")
+  print(table(samplesTable$numOf1))
+  cat("count numOf2:")
+  print(table(samplesTable$numOf2))
+  cat("count numOf3:")
+  print(table(samplesTable$numOf3))
+}
+```
+
+## Plots:
+### Count Bar Plot - Num of 1s:
+```{r}
+print(
+  samplesTable %>%
+    gf_counts(~ numOf1) %>%
+    gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
+)
+```
+### Count Bar Plot - Num of 2s:
+```{r}
+print(
+  samplesTable %>%
+    gf_counts(~ numOf2) %>%
+    gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
+)
+```
+### Count Bar Plot - Num of 3s:
+```{r}
+print(
+  samplesTable %>%
+    gf_counts(~ numOf3) %>%
+    gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
+)
+```
+### Percents Bar Blot - Num of 3s:
+```{r}
+print(
+  samplesTable %>%
+    gf_percents(~ numOf3) %>%
+    gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
+)
+```
+### Proportion Bar Blot - Num of 3s:
+```{r}
+print(
+  samplesTable %>%
+    gf_props(~ numOf3) %>%
+    gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
+)
+```
+### Proportion Bar Blot - Proportions of 3s:
+```{r}
+print(
+  samplesTable %>%
+    gf_props(~ numOf3/n) %>%
+    gf_refine(scale_x_continuous(breaks = seq(0, 1, length = n+1), limits = c(-0.5, n+0.5)/n))
+)
+```
+  If we wanted something like the number of 1s + number of 2s we can use mutate
+to build a new table.
+
+```{r}
+samplesTable %>%
+  mutate(
+    numOf1Plus2 = numOf1 + numOf2
+  )
+  
+```
+
+
+  If we save that table we can use it to plot later or if we only plan on using
+it once we can just send it right to gf_props, gf_counts or gf_percents
+
+```{r}
+samplesTable %>%
+  mutate(
+    numOf1Plus2 = numOf1 + numOf2
+  ) %>%
+  gf_props(~ numOf1Plus2/n) %>%
+  gf_refine(scale_x_continuous(breaks = seq(0, 1, length = n+1), limits = c(-0.5, n+0.5)/n))
+```
+  Or we can use the formula we give gf_props to do simple operations like
+adding, subtracting, multiplying and dividing.
+
+```{r}
+samplesTable %>%
+  gf_props(~ 1 - (numOf1 + numOf2)/n) %>%
+  gf_refine(scale_x_continuous(breaks = seq(0, 1, length = n+1), limits = c(-0.5, n+0.5)/n))
+```
