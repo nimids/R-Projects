@@ -1,14 +1,14 @@
 ---
-title: "R Notebook"
+title: "rpick Notes"
 output:
-  html_notebook: rmarkdown::html_document
-  pdf_document: default
   html_document: rmarkdown::html_document
+  pdf_document: default
+  html_notebook: rmarkdown::html_document
 ---
 
 ```{r}
-#source("https://raw.githubusercontent.com/nimids/R-Projects/main/sourceGitHub.R")
-source("source.R")
+source("https://raw.githubusercontent.com/nimids/R-Projects/main/sourceGitHub.R")
+#source("source.R")
 ```
 
 # Random Pick:
@@ -59,9 +59,9 @@ value(pickResult)
 
 Do lots of one samples:
 ```{r}
-samples <- 10000
+samples <- 1000
 
-samplesTable <- do(samples) * rpick(n = n, choices = c(1,1,1,2,2,3))
+samplesTable <- do(samples) * rpick(n, choices)
 
 print(samplesTable)
 ```
@@ -97,53 +97,59 @@ Print out counts of each result:
 
 ## Plots:
 ### Count Bar Plot - Num of 1s:
-```{r}
+```{r fig.height=6.75, fig.width=12}
 print(
   samplesTable %>%
     gf_counts(~ numOf1) %>%
     gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
 )
 ```
+
 ### Count Bar Plot - Num of 2s:
-```{r}
+```{r fig.height=6.75, fig.width=12}
 print(
   samplesTable %>%
     gf_counts(~ numOf2) %>%
     gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
 )
 ```
+
 ### Count Bar Plot - Num of 3s:
-```{r}
+```{r fig.height=6.75, fig.width=12}
 print(
   samplesTable %>%
     gf_counts(~ numOf3) %>%
     gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
 )
 ```
+
 ### Percents Bar Blot - Num of 3s:
-```{r}
+```{r fig.height=6.75, fig.width=12}
 print(
   samplesTable %>%
     gf_percents(~ numOf3) %>%
     gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
 )
 ```
+
 ### Proportion Bar Blot - Num of 3s:
-```{r}
+```{r fig.height=6.75, fig.width=12}
 print(
   samplesTable %>%
     gf_props(~ numOf3) %>%
     gf_refine(scale_x_continuous(breaks = seq(0, n, length = n+1), limits = c(-0.5, n+0.5)))
 )
 ```
+
 ### Proportion Bar Blot - Proportions of 3s:
-```{r}
+```{r fig.height=6.75, fig.width=12}
 print(
   samplesTable %>%
     gf_props(~ numOf3/n) %>%
     gf_refine(scale_x_continuous(breaks = seq(0, 1, length = n+1), limits = c(-0.5, n+0.5)/n))
 )
 ```
+
   If we wanted something like the number of 1s + number of 2s we can use mutate
 to build a new table.
 
@@ -159,7 +165,7 @@ samplesTable %>%
   If we save that table we can use it to plot later or if we only plan on using
 it once we can just send it right to gf_props, gf_counts or gf_percents
 
-```{r}
+```{r fig.height=6.75, fig.width=12}
 samplesTable %>%
   mutate(
     numOf1Plus2 = numOf1 + numOf2
@@ -170,7 +176,7 @@ samplesTable %>%
   Or we can use the formula we give gf_props to do simple operations like
 adding, subtracting, multiplying and dividing.
 
-```{r}
+```{r fig.height=6.75, fig.width=12}
 samplesTable %>%
   gf_props(~ 1 - (numOf1 + numOf2)/n) %>%
   gf_refine(scale_x_continuous(breaks = seq(0, 1, length = n+1), limits = c(-0.5, n+0.5)/n))

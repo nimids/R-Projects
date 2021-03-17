@@ -59,11 +59,11 @@ print.pickresult <- function(object, ...) {
   ), "", sep = "\n")
   cat("Summary:", sep = "\n")
   choices <- unique(details$choices)
-  print(data.frame(
+  cat(knitr::kable(data.frame(
     choice = choices,
     numOf = sapply(choices, function(choice)sum(details$result == choice)),
     propOf = sapply(choices, function(choice)sum(details$result == choice))/details$n
-  ), row.names = FALSE)
+  ), format = "rst", row.names = FALSE), sep = "\n")
 }
 .S3method("print", "pickresult")
 
