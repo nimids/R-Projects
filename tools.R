@@ -22,6 +22,13 @@ GCD <- function(vector = NULL, gformula = NULL, data = NULL){
   return(lowest)
 }
 
+camelCase <- function(string, first = TRUE){
+  stringr::str_replace_all(
+    stringr::str_to_title(
+      stringr::str_replace_all(string, "\\.", " ")
+    )
+  , " ", "")
+}
 
 #The arguments should be self explanatory see Chris during office hour for a detailed explanation.
 buildHistogram <- function(data, gformula, title = "",
@@ -106,4 +113,27 @@ buildHistogram <- function(data, gformula, title = "",
     )
   if(!label)histogram <- histogram + theme(legend.position = "none")
   histogram
+}
+
+getExample <- function(name){
+  url <- paste0('https://raw.githubusercontent.com/nimids/R-Projects/main/examples/', name, '.Rmd')
+  if(!dir.exists(file.path(getwd(), "examples"))){
+    dir.create(file.path(getwd(), "examples"))
+  }
+  path <- file.path(getwd(), "examples", paste0(name, '.Rmd'))
+  download.file(url, path)
+  file.edit(path)
+}
+
+loadAssignment <- function(name){
+  presentation <- paste0('https://raw.githubusercontent.com/nimids/R-Projects/main/assigments/', name, 'presentation.html')
+  worksheet <- paste0('https://raw.githubusercontent.com/nimids/R-Projects/main/assigments/', name, 'Worksheet.Rmd')
+  if(!dir.exists(file.path(getwd(), "worksheets"))){
+    dir.create(file.path(getwd(), "worksheets"))
+  }
+  path <- file.path(getwd(), "worksheets", paste0(name, "-", Sys.Date(), '.Rmd'))
+  download.file(worksheet, path)
+  file.edit(path)
+  temp <- tempfile(fileext = ".html")
+  download.file(presentation, temp)
 }

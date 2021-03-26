@@ -26,6 +26,7 @@ rpick <- function (
   replace = TRUE,
   verbose = FALSE
 ){
+  n <- as.integer(n)
   result <- sample(choices, n, replace = replace)
   pick <- paste(result, collapse = ", ")
   attr(pick, "n") <- n
@@ -41,7 +42,7 @@ rpick <- function (
   }
 }
 
-print.pickresult <- function(object, ...) {
+.print.pickresult <- function(object, ...) {
   details <- attributes(object)
   cat(strwrap(
     paste0(
@@ -65,9 +66,9 @@ print.pickresult <- function(object, ...) {
     propOf = sapply(choices, function(choice)sum(details$result == choice))/details$n
   ), format = "rst", row.names = FALSE), sep = "\n")
 }
-.S3method("print", "pickresult")
+.S3method("print", "pickresult", .print.pickresult)
 
-value.pickresult <- function(object, asList = TRUE, asDataFrame = !asList, ...) {
+.value.pickresult <- function(object, asList = TRUE, asDataFrame = !asList, ...) {
   details <- attributes(object)
   if(asDataFrame){
     value <- data.frame(n = details$n)
@@ -82,14 +83,17 @@ value.pickresult <- function(object, asList = TRUE, asDataFrame = !asList, ...) 
       result = details$result
     )
   }
+
   for(choice in unique(details$choices)){
-    value[[paste0("numOf", choice)]] = sum(details$result == choice)
+    choiceNice <- camelCase(choice)
+    value[[paste0("numOf", choiceNice)]] = sum(details$result == choice)
+    value[[paste0("propOf", choiceNice)]] = sum(details$result == choice)/details$n
   }
   return(value)
 }
-.S3method("value", "pickresult")
+.S3method("value", "pickresult", .value.pickresult)
 
-cull_for_do.pickresult <- function(object, ...) {
+.cull_for_do.pickresult <- function(object, ...) {
   return(value(object, asDataFrame = TRUE))
 }
-.S3method("cull_for_do", "pickresult")
+.S3method("cull_for_do", "pickresult", .cull_for_do.pickresult)

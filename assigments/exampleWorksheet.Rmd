@@ -1,0 +1,86 @@
+---
+title: 'Learning R: Basic Table Manipulation'
+author: YOUR_NAME_HERE
+output:
+  pdf_document: rmarkdown::pdf_document
+  html_document: rmarkdown::html_document
+  word_document: rmarkdown::word_document
+  html_notebook: rmarkdown::html_document
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library("mosaic")
+```
+
+
+Problem #1:
+```{r}
+Birthdays %>% filter(state == "CA", <name> == <value>)
+```
+
+Problem #2:
+```{r}
+sum(data = filteredBirthdays, ~ <thing>)
+
+<func>(data = <dataset>, <formula>)
+<func>(data = <dataset>, <formula>)
+<func>(data = <dataset>, <formula>)
+<func>(data = <dataset>, <formula>)
+```
+
+Example Code #1:
+```{r}
+filteredBirthdays %>% summarize(
+  fivenum1 = fivenum(births)[1],
+  fivenum2 = fivenum(births)[2],
+  fivenum3 = fivenum(births)[3],
+  fivenum4 = fivenum(births)[4],
+  fivenum5 = fivenum(births)[5],
+  quantile0 = quantile(births)[1],
+  quantile1 = quantile(births)[2],
+  quantile2 = quantile(births)[3],
+  quantile3 = quantile(births)[4],
+  quantile4 = quantile(births)[5],
+  IQR = IQR(births),
+  var = var(births),
+  sd = sd(births),
+  max = max(births),
+  median = median(births),
+  min = min(births),
+  mean = mean(births),
+  sum = sum(births)
+)
+```
+
+Problem #3:
+```{r}
+Birthdays %>%
+  group_by(<group>) %>%
+  summarise(births = sum(births)) 
+```
+
+Problem #4:
+```{r results = "hide"}
+Birthdays %>%
+  group_by(<group>) %>%
+  summarise(variance = <func>(births)) %>%
+  arrange(desc(variance))
+```
+Replace the ____ with the states got most and Least:
+- Most: ____
+- Least: ____
+
+Problem #5:
+```{r}
+Birthdays %>%
+  filter(<name> == <value>, <name> == <value>) %>%
+  group_by(<group>) %>%
+  summarise(births = <func>(<thingTosummarise>))
+```
+
+Problem #6:
+```{r results = "hide"}
+<NUMBER5> %>%
+  gf_col(<y> ~ <x>)
+```
+

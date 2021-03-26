@@ -1,14 +1,11 @@
 ---
 title: "rpick Notes"
 output:
-  html_document: rmarkdown::html_document
-  pdf_document: default
-  html_notebook: rmarkdown::html_document
+  html_notebook: default
 ---
 
 ```{r}
 source("https://raw.githubusercontent.com/nimids/R-Projects/main/sourceGitHub.R")
-#source("source.R")
 ```
 
 # Random Pick:
@@ -156,7 +153,8 @@ to build a new table.
 ```{r}
 samplesTable %>%
   mutate(
-    numOf1Plus2 = numOf1 + numOf2
+    numOf1Plus2 = numOf1 + numOf2,
+    propOf1Plus2 = (numOf1 + numOf2)/n
   )
   
 ```
@@ -168,9 +166,9 @@ it once we can just send it right to gf_props, gf_counts or gf_percents
 ```{r fig.height=6.75, fig.width=12}
 samplesTable %>%
   mutate(
-    numOf1Plus2 = numOf1 + numOf2
+    propOf1Plus2 = (numOf1 + numOf2)/n
   ) %>%
-  gf_props(~ numOf1Plus2/n) %>%
+  gf_props(~ propOf1Plus2) %>%
   gf_refine(scale_x_continuous(breaks = seq(0, 1, length = n+1), limits = c(-0.5, n+0.5)/n))
 ```
   Or we can use the formula we give gf_props to do simple operations like

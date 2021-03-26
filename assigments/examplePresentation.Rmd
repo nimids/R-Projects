@@ -1,0 +1,248 @@
+---
+title: Basic Table Summarizing and Manipulation
+author: Chris Luke
+output: slidy_presentation
+---
+
+# Set Up
+
+Change `author: YOUR_NAME_HERE` in the header to your name accordingly for
+example I would do `author: Chris Luke`
+
+Notes: you should have mosaic and rmarkdown packages installed.
+
+To check copy this code to the console and run it:
+```{r eval = FALSE}
+c("mosaic", "rmarkdown") %in% installed.packages()
+```
+  
+You should get a line with "[1] TRUE TRUE". The first TRUE is for mosaic and the
+second TRUE is for rmarkdown. If you get a FALSE you need to run install the
+packages this code will install both the packages:
+```{r eval = FALSE}
+install.packages(c("mosaic", "rmarkdown"))
+```
+  
+To turn in this assignment we are going to "knit" it into a PDF for that we need
+tinytex. To check if tinytex is installed run this in the console:
+```{r eval = FALSE}
+tinytex::is_tinytex()
+```
+
+You should get "[1] FALSE" if tinytex isn't installed. If you get TRUE then you
+don't need to install tinytex and can skip ahead.
+
+We install tinytex by running this code in the console:
+```{r eval = FALSE}
+tinytex::install_tinytex()
+```
+
+Now \``tinytex::is_tinytex()`\` should return TRUE
+
+# Loading mosaic
+
+There should be code chunk that loads mosaic first thing in your "worksheet". We 
+are going to always need to load mosaic, if it has been loaded this doesn't do
+anything, but if it hasn't it loads it. We don't have to load rmarkdown or
+tinytex because while we are using them they are used differently.
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library("mosaic")
+```
+
+To use the worksheet we are going to put/edit code in the chunks then we will
+run them, by hitting the green play button to their right. Following along with
+these slides.
+
+# mosaicData
+
+Mosaic includes mosaicData we are going to use the data sets in includes to do
+some summarizing, Table Manipulation and plotting.
+
+Run this code in the console a help page should open with all the Data Sets. You
+may want to look though them, Birthdays in particular. then come back to the
+viewer table to continue.
+```{r}
+help(package = "mosaicData")
+```
+
+# Filtering a table
+
+So what if we wanted to know the number of children born in 1988 in CA from the
+Birthdays data set?
+First we can look at Birthdays by running `View(Birthdays)` in the console.
+We get a spread sheet of values, but that includes all the states and all the years.
+
+So we are going to filter Birthdays using `filter(...)` to get the state of CA
+like this:
+```{r eval = FALSE}
+data %>% filter(<name> == <value>)
+```
+
+`data` is the data we are filtering and `<name>` should be the name of the
+column we want to filter on and `<value>` is the value we want to compare it
+with. So we get the following:
+```{r eval = FALSE}
+Birthdays %>% filter(state == "CA")
+```
+Try running this in the console. you should get a number of rows of this table
+all printed out.
+
+# More Filtering
+
+That filtered it to just CA but we want just CA in 1980.
+Edit this code for #1 in the worksheet, replacing `<name>` and `<value>` to get
+just CA in 1980. Note: the value is a number here so no quotes.
+
+```{r eval = FALSE}
+Birthdays %>% filter(state == "CA", <name> == <value>)
+```
+Finally run it to see what you get.
+
+# Assigning Variables
+
+Now we want to put our filtered data into a variable to use it again.
+There are two ways of doing this `a -> b` and `a <- b`.
+
+- `a -> b` stores a in variable b
+- `a <- b` makes a variable a then puts b in it.
+
+Since we already had something on the line for #1 we can just add
+`-> filteredBirthdays` to the end like this:
+```{r eval = FALSE}
+Birthdays %>% filter(state == "CA", <name> == <value>) -> filteredBirthdays
+```
+
+# Simple Summarizing
+
+Now lets find the total number of birthdays in CA in 1980, we use sum() to do
+this first we need to tell sum to use filteredBirthdays as it's data, then we
+need to tell it what to add up with a "formula" they look like `~ <thing>`
+Replace `<thing>` with `births` because that's what we want to add up.
+```{r eval = FALSE}
+sum(data = filteredBirthdays, ~ <thing>)
+```
+
+There are several other functions that have the same layout:
+
+`func(data = <dataset>, <formula>)` or `func(<formula>, data = <dataset>)`
+
+- fivenum: returns Tukey's five number summary
+- quantile: returns quartiles by default
+- IQR: computes interquartile range based on quartiles
+- var: computes the sample Variance
+- sd: computes the sample standard deviation
+
+These should be self explanatory: median, max, mean, min, prod, range, sum
+
+For #2 in the worksheet replace <thing> for sum, and edit the the templates to
+write 4 lines of code to find the sum, min, median, max, and mean number of
+births. Don't forget the formula starts with a ~ its called a tilde (also know
+as a squiggly or twiddle) and it's on the top left of your keyboard under the
+ESC key with the backtick. Run the chunk for #2 before moving on.
+
+# Advanced Summarizing
+
+summarize(..) is a helpful function that can build us a new table from an old by
+summarizing, note for fivenum and quantile because they return multiple values
+we have to take care of that or we will get odd results.
+
+Run ex#1 to see it in action. hit the right arrow and check if the values match
+up with the ones from #2
+
+But, this output is kind of boring so let try grouping by something first,
+group_by(...) will do this for us so try replacing in number 3 `<group>` so we
+group by state. Then we use summarize to sum up the births.
+```{r eval = FALSE}
+Birthdays %>%
+  group_by(<group>) %>%
+  summarise(births = sum(births)) 
+```
+
+# Table Sorting
+
+Now lets look at what state had the least or most variance in births.
+
+Look at the code for #4 and replace `<group>` and `<func>` with the right things
+
+Arrange sorts things smallest to largest. Run this code in number 4 to see the
+least then replace `arrange(variance)` with `arrange(desc(variance))` to see the
+most.
+```{r eval = FALSE}
+Birthdays %>%
+  group_by(<group>) %>%
+  summarise(variance = <func>(births)) %>%
+  arrange(desc(variance))
+```
+
+Replace the ____ with the states that had the most and least variance
+
+- Most: ____
+- Least: ____
+
+# Puting it together Filter, Group and Summarise
+
+Now what if we wanted to know the `sum` of births per month in CA in 1980?
+Replace the things in angle brackets so we get the `sum` of births per month in
+CA in 1980, for number 5. Then run it you should get a nice table.
+```{r eval = FALSE}
+Birthdays %>%
+  filter(<name> == <value>, <name> == <value>) %>%
+  group_by(<group>) %>%
+  summarise(births = <func>(<thingTosummarise>))
+```
+
+# Ploting our table
+First copy your number 5 to number 6 replacing `<NUMBER5>`. Now lets make a
+column plot of this data, `gf_col(...)` does what we want but it's formula takes
+two things we plot one thing in respect to another. so it's formula looks like:
+`<y> ~ <x>`. So we can start with our raw data set send it to a filter, group
+it, summarize it, then plot it by just sending it from one thing to another. So
+add `%>% gf_col(<y> ~ <x>)` to the end of number 5 for number 6. Then replace
+`<y>` and `<x>` so we get a column plot of births per month. Hint: if you get lots
+of skinny tall lines swap your `<y>` and `<x>`.
+```{r eval = FALSE}
+Birthdays %>%
+  filter(<name> == <value>, <name> == <value>) %>%
+  group_by(<group>) %>%
+  summarise(births = <func>(<thingTosummarise>)) %>%
+  gf_col(<y> ~ <x>)
+```
+
+# Example Plot A:
+Points for births by the day of the year
+
+```{r}
+Birthdays %>%
+  mutate(
+    #strftime is a function for formatting dates here we get just the dayOfYear
+    dayOfYear = as.numeric(strftime(date, format = "%j"))
+  ) %>%
+  #lets remove the last day of leap years so we can see the other days clearly
+  filter(dayOfYear <= 365) %>%
+  group_by(dayOfYear) %>%
+  summarise(births = sum(births)) %>%
+  gf_point(births ~ dayOfYear)
+```
+
+# Example Plot B:
+Or a line plot with births by day of the week:
+
+```{r}
+Birthdays %>%
+  mutate(
+    #strftime is a function for formatting dates here we get just the dayOfWeek
+    dayOfWeek = as.numeric(strftime(date, format = "%u"))
+  ) %>%
+  group_by(dayOfWeek) %>%
+  summarise(births = sum(births)) %>%
+  gf_path(births ~ dayOfWeek)
+```
+
+# Finshing:
+Now after you have read/ran everything and following the instructions, and
+replaced all the `<things>` correctly in the previous sections. At the top left
+of the editor panel in RStudio there is a button that says "Knit" or "Preview"
+click the arrow to the right of it then click "Knit to PDF" R will make a PDF of
+this notebook, that's what you will turn in. Don't forget to change the author
+at the very top to your name.

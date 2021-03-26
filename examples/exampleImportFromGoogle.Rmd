@@ -1,0 +1,49 @@
+---
+title: "Example of Importing from Google"
+author: Chris Luke
+output:
+  html_notebook: default
+---
+
+<!--
+Notes: you should have mosaic and rmarkdown packages installed.
+To check copy this code to the console and run it.
+  `c("mosaic", "rmarkdown") %in% installed.packages()`
+You should get a line with "[1] TRUE TRUE".
+  The first TRUE is for mosaic and the second TRUE is for rmarkdown.
+If you get a FALSE you need to run `install.packages(c("mosaic", "rmarkdown"))`
+  this will install both the packages.
+-->
+
+```{r setup, message=FALSE, warning=FALSE}
+# We are going to always need to load mosaic, if it has been loaded this doesn't
+#   do anything, but if it hasn't it loads it. We have to load rmarkdown because
+#   it's used differently.
+library("mosaic")
+```
+
+
+Use `read.csv(...)` to import your csv from google:
+```{r}
+table <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSMwtgwVkhRf2JO2QWE8WGjERnUVH5-TdktgNchWPOss_G2E-0HcbS72qNq9ZhV4omz6MHI22O-ZUpi/pub?gid=255031792&single=true&output=csv")
+
+```
+
+Hide personal things here:
+```{r}
+table %>% mutate(
+  "Your.Name." = NULL
+) -> table
+```
+
+Print view the table.
+```{r}
+print(table)
+```
+
+Tell what type of plot you would like to use to show your data:
+
+<type here>
+
+
+

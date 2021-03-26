@@ -1,0 +1,83 @@
+---
+title: "sample with replament simulation"
+output:
+  html_document: rmarkdown::html_document
+  pdf_document: default
+  html_notebook: rmarkdown::html_document
+---
+
+This needs to ran at least once every time R is restarted.
+```{r setup}
+#suppressMessages hides some mosaic warnings.
+suppressMessages(library("mosaic"))
+```
+
+I'm lost on what this is leading to, so this may not be the best way. If the
+size of the sample is not 1 tally breaks when you use it this way.
+
+Tally is just meant to tally up counts like a bar plot, but in text. It has a
+default of format = "count" see ?mosaicCore::tally for more details
+
+tally matches up with graphs like this:
+
+- `tally(~ draw, data = draws, format = "count")` <==> `gf_counts(~ draw, data = draws)`.
+- `tally(~ draw, data = draws, format = "proportion")` <==> `gf_props(~ draw, data = draws)`.
+- `tally(~ draw, data = draws, format = "percent")` <==> `gf_percents(~ draw, data = draws)`.
+
+Also if you're using mosaic for do() why not use resample() for sample(replace = TRUE)?
+
+# Based on tally
+```{r}
+songs <- c(rep("rap",39), rep("rock",61))
+draws <- do(500)*list(
+                   draw = sample(songs, size = 1, replace = TRUE)
+                 )
+```
+Print counts
+```{r}
+# Just a warning tally works without "data = " but some mosaic functions don't.
+tally(~ draw, data = draws) # format = "count" is the default
+```
+Show counts
+```{r}
+gf_bar(~ draw, data = draws)
+gf_counts(~ draw, data = draws)
+```
+
+Print Proportions
+```{r}
+tally(~ draw, data = draws, format = "proportion")
+```
+Show Proportions
+```{r}
+gf_props(~ draw, data = draws)
+```
+
+Print Percents
+```{r}
+tally(~ draw, data = draws, format = "percent")
+```
+Show Percents
+```{r}
+gf_percents(~ draw, data = draws)
+```
+
+
+# Using my rpick
+
+This slightly different and does 1 sample of 500 rather then 500 samples of 1
+```{r}
+source("https://raw.githubusercontent.com/nimids/R-Projects/main/sourceGitHub.R")
+songs <- c(rep("rap", 39), rep("rock", 61))
+# will pick 500 things from songs with replacement
+# verbose = TRUE forces rpick to tell me about it's picking we could also have a
+#    line with just "picks" on it in some cases or print(picks) in all cases.
+picks <- rpick(500, songs, verbose = TRUE)
+```
+
+Get Raw Values
+```{r}
+value(picks)
+value(picks)$numOfrap/500
+value(picks)$numOfrock/500
+```
