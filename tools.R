@@ -126,14 +126,18 @@ getExample <- function(name){
 }
 
 loadAssignment <- function(name){
-  presentation <- paste0('https://raw.githubusercontent.com/nimids/R-Projects/main/assigments/', name, 'presentation.html')
   worksheet <- paste0('https://raw.githubusercontent.com/nimids/R-Projects/main/assigments/', name, 'Worksheet.Rmd')
+
   if(!dir.exists(file.path(getwd(), "worksheets"))){
     dir.create(file.path(getwd(), "worksheets"))
   }
   path <- file.path(getwd(), "worksheets", paste0(name, "-", Sys.Date(), '.Rmd'))
-  download.file(worksheet, path)
+  download.file(worksheet, path, "curl")
   file.edit(path)
+
+  presentation <- paste0('https://raw.githubusercontent.com/nimids/R-Projects/main/assigments/', name, 'Presentation.html')
+
   temp <- tempfile(fileext = ".html")
-  download.file(presentation, temp)
+  download.file(presentation, temp, "curl")
+  rstudioapi::viewer(temp)
 }
